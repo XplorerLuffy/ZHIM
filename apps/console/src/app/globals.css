@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: 245 168 0;
+    --color-secondary: 42 154 88;
+  }
+
+  /* Jomolhari for Dzongkha Uchen rendering */
+  @font-face {
+    font-family: 'Jomolhari';
+    src: url('/fonts/Jomolhari-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  .font-dzongkha {
+    font-family: 'Jomolhari', 'Tibetan Machine Uni', serif;
+    line-height: 2;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 99px; }
+}
