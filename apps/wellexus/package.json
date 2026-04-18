@@ -35,8 +35,6 @@
     "lottie-react-native": "7.1.0",
     "@tanstack/react-query": "^5.20.0",
     "zustand": "^4.5.0",
-    "openai": "^4.47.0",
-    "axios": "^1.6.5",
     "react-native-toast-message": "^2.2.0"
   },
   "devDependencies": {

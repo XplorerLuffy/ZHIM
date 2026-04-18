@@ -1,15 +1,59 @@
-/**
- * OpenAI plan generation — calls the generate-plan Edge Function
- * so the API key stays server-side and is never bundled in the app.
- *
- * Falls back to static plans if the function is unreachable.
- */
-import { supabase } from '../lib/supabase';
-import type { WellnessPlanText, Mood } from '../types';
+export type Mood = 'happy' | 'anxious' | 'tired' | 'motivated' | 'sad';
 
-const FALLBACK_PLANS: Record<Mood, WellnessPlanText> = {
+export interface WellnessPlanText {
+  meal_suggestion: string;
+  workout_suggestion: string;
+  mindfulness: string;
+  meal_query: string;
+  workout_query: string;
+}
+
+export interface SpoonacularRecipe {
+  id: number;
+  title: string;
+  image: string;
+  readyInMinutes: number;
+  servings: number;
+  calories?: number;
+}
+
+export interface Exercise {
+  id: string;
+  name: string;
+  bodyPart: string;
+  equipment: string;
+  gifUrl: string;
+  target: string;
+  instructions?: string[];
+}
+
+export interface WellnessPlanRequest {
+  mood: Mood;
+  intensity: number;
+}
+
+export interface WellnessPlanResponse {
+  plan_id: string;
+  mood_log_id: string;
+  meal: SpoonacularRecipe | null;
+  workout: Exercise | null;
+  mindfulness: string;
+  meal_suggestion: string;
+  workout_suggestion: string;
+  date: string;
+}
+
+export const MOOD_TO_BODYPART: Record<Mood, string> = {
+  anxious:   'back',
+  tired:     'neck',
+  sad:       'cardio',
+  happy:     'chest',
+  motivated: 'upper legs',
+};
+
+export const FALLBACK_PLANS: Record<Mood, WellnessPlanText> = {
   happy: {
-    meal_suggestion:    'A vibrant grain bowl with roasted veggies, chickpeas, and tahini dressing — fuel for your great mood!',
+    meal_suggestion:    'A vibrant grain bowl with roasted veggies, chickpeas, and tahini dressing.',
     workout_suggestion: 'Celebrate your energy with a 20-minute HIIT session or a fun dance workout.',
     mindfulness:        'Take a moment to feel gratitude for this positive energy. Close your eyes, breathe deeply, and smile.',
     meal_query:         'grain bowl',
@@ -17,8 +61,8 @@ const FALLBACK_PLANS: Record<Mood, WellnessPlanText> = {
   },
   anxious: {
     meal_suggestion:    'A calming oatmeal bowl with honey and banana — gentle nourishment for an anxious mind.',
-    workout_suggestion: 'Gentle yoga or a slow 15-minute stretching routine to release tension from your body.',
-    mindfulness:        'Try box breathing: inhale for 4 counts, hold for 4, exhale for 4, hold for 4. Repeat 5 times. You are safe.',
+    workout_suggestion: 'Gentle yoga or a slow 15-minute stretching routine to release tension.',
+    mindfulness:        'Try box breathing: inhale 4 counts, hold 4, exhale 4, hold 4. Repeat 5 times. You are safe.',
     meal_query:         'oatmeal bowl',
     workout_query:      'stretching',
   },
@@ -32,7 +76,7 @@ const FALLBACK_PLANS: Record<Mood, WellnessPlanText> = {
   motivated: {
     meal_suggestion:    'A high-protein chicken and quinoa salad with avocado — perfect fuel for your drive today.',
     workout_suggestion: 'Channel that energy into a 30-minute strength training session focusing on compound lifts.',
-    mindfulness:        'Visualize your goals clearly for 60 seconds. Feel the determination in your chest — it is real and powerful.',
+    mindfulness:        'Visualize your goals clearly for 60 seconds. Feel the determination in your chest — it is real.',
     meal_query:         'quinoa salad',
     workout_query:      'upper legs',
   },
@@ -44,15 +88,3 @@ const FALLBACK_PLANS: Record<Mood, WellnessPlanText> = {
     workout_query:      'cardio',
   },
 };
-
-export async function generateWellnessPlan(mood: Mood, intensity: number): Promise<WellnessPlanText> {
-  try {
-    const { data, error } = await supabase.functions.invoke<WellnessPlanText>('generate-plan', {
-      body: { mood, intensity },
-    });
-    if (error || !data) return FALLBACK_PLANS[mood];
-    return data;
-  } catch {
-    return FALLBACK_PLANS[mood];
-  }
-}
