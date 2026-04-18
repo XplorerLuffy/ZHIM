@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "Wellexus",
+    "slug": "wellexus",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "wellexus",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#A8EDCA"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.wellexus.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#A8EDCA"
+      },
+      "package": "com.wellexus.app"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store",
+      "expo-splash-screen"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
